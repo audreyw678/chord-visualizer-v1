@@ -27,7 +27,7 @@ def draw_hand_skeleton(frame, hand_landmarks, connections = HAND_CONNECTIONS, co
 
 def get_angle(result, hand_name, lm1, lm2, lm3):
         hand = None
-        for hand_landmarks, hand_label in zip(result.hand_world_landmarks, result.handedness):
+        for hand_landmarks, hand_label in zip(result.hand_landmarks, result.handedness):
             if hand_label[0].category_name == hand_name:
                 hand = hand_landmarks
                 break
