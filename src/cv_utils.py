@@ -1,15 +1,6 @@
 import cv2
 import numpy as np
-
-HAND_CONNECTIONS = [
-    (0,1),(1,2),(2,3),(3,4),       # thumb
-    (0,5),(5,6),(6,7),(7,8),       # index
-    (0,9),(9,10),(10,11),(11,12),  # middle
-    (0,13),(13,14),(14,15),(15,16),# ring
-    (0,17),(17,18),(18,19),(19,20) # pinky
-   # (5, 9), (9, 13), (13, 17)     # palm
-]
-KNUCKLES = [2, 5, 9, 13, 17]
+from hand_info import *
 
 def draw_landmarks(frame, hand_landmarks):
     """draw hand landmarks as green circles"""
@@ -33,17 +24,17 @@ def draw_hand_skeleton(frame, hand_landmarks, connections = HAND_CONNECTIONS, co
 
 
 # HAND ERROR: SOMETIMES LEFT AND RIGHT ARE SWITCHED. TO FIX: 
-# for hand, hand_label in zip(result.hand_landmarks, result.handedness):
-#     if hand_label[0].category_name == "Left":
-#         left_hand = hand
-#     else:
-#         right_hand = hand
 
-def get_angle(hand_world_landmarks, hand_idx, lm1, lm2, lm3):
-    if hand_world_landmarks:
-        hand = hand_world_landmarks[hand_idx]
-        v1 = [hand[lm1].x - hand[lm2].x, hand[lm1].y - hand[lm2].y, hand[lm1].z - hand[lm2].z]
-        v2 = [hand[lm3].x - hand[lm2].x, hand[lm3].y - hand[lm2].y, hand[lm3].z - hand[lm2].z]
+def get_angle(result, hand_name, lm1, lm2, lm3):
+        hand = None
+        for hand_landmarks, hand_label in zip(result.hand_world_landmarks, result.handedness):
+            if hand_label[0].category_name == hand_name:
+                hand = hand_landmarks
+                break
+        if hand is None:
+            return None 
+        v1 = np.array([hand[lm1].x - hand[lm2].x, hand[lm1].y - hand[lm2].y, hand[lm1].z - hand[lm2].z])
+        v2 = np.array([hand[lm3].x - hand[lm2].x, hand[lm3].y - hand[lm2].y, hand[lm3].z - hand[lm2].z])
         v1_norm = v1 / np.linalg.norm(v1)
         v2_norm = v2 / np.linalg.norm(v2)
         dot_product = np.dot(v1_norm, v2_norm)

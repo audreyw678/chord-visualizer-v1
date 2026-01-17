@@ -5,6 +5,7 @@ from config import MODEL_PATH
 import cv2
 from cv_utils import *
 from notes import *
+from hand_info import *
 
 BaseOptions = mp.tasks.BaseOptions
 HandLandmarker = mp.tasks.vision.HandLandmarker
@@ -16,8 +17,10 @@ def print_result(result: HandLandmarkerResult, output_image, timestamp_ms: int):
     print('hand landmarker result: {}'.format(result))
     global landmarks
     landmarks = result.hand_landmarks
-    print(get_note(get_angle(result.hand_world_landmarks, "Left", 8, 5, 0)), get_note(get_angle(result.hand_world_landmarks, "Left", 12, 9, 0)),
-          get_note(get_angle(result.hand_world_landmarks, "Right", 8, 5, 0)), get_note(get_angle(result.hand_world_landmarks, "Right", 12, 9, 0)))
+    print(get_note(get_angle(result, "Left", INDEX_TIP, INDEX_KNUCKLE_1, WRIST)),
+          get_note(get_angle(result, "Left", MIDDLE_TIP, MIDDLE_KNUCKLE_1, WRIST)),
+          get_note(get_angle(result, "Right", INDEX_TIP, INDEX_KNUCKLE_1, WRIST)), 
+          get_note(get_angle(result, "Right", MIDDLE_TIP, MIDDLE_KNUCKLE_1, WRIST)))
 
 
 options = HandLandmarkerOptions(
