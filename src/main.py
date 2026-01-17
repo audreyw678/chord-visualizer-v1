@@ -7,6 +7,8 @@ from cv_utils import *
 from notes import *
 from hand_info import *
 
+initiate_pyo()
+
 BaseOptions = mp.tasks.BaseOptions
 HandLandmarker = mp.tasks.vision.HandLandmarker
 HandLandmarkerOptions = mp.tasks.vision.HandLandmarkerOptions
