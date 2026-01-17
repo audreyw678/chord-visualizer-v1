@@ -4,6 +4,7 @@ from mediapipe.tasks.python import vision
 from config import MODEL_PATH
 import cv2
 from cv_utils import *
+from notes import *
 
 BaseOptions = mp.tasks.BaseOptions
 HandLandmarker = mp.tasks.vision.HandLandmarker
@@ -15,6 +16,8 @@ def print_result(result: HandLandmarkerResult, output_image, timestamp_ms: int):
     #print('hand landmarker result: {}'.format(result))
     global landmarks
     landmarks = result.hand_landmarks
+    print(get_note(get_angle(result.hand_world_landmarks, 0, 8, 5, 0)), get_note(get_angle(result.hand_world_landmarks, 0, 12, 9, 0)))
+
 
 options = HandLandmarkerOptions(
     base_options=BaseOptions(model_asset_path=str(MODEL_PATH)),

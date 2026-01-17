@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 
 HAND_CONNECTIONS = [
     (0,1),(1,2),(2,3),(3,4),       # thumb
@@ -8,6 +9,7 @@ HAND_CONNECTIONS = [
     (0,17),(17,18),(18,19),(19,20) # pinky
    # (5, 9), (9, 13), (13, 17)     # palm
 ]
+KNUCKLES = [2, 5, 9, 13, 17]
 
 def draw_landmarks(frame, hand_landmarks):
     """draw hand landmarks as green circles"""
@@ -28,3 +30,17 @@ def draw_hand_skeleton(frame, hand_landmarks, connections = HAND_CONNECTIONS, co
                 x1, y1 = int(start.x * frame.shape[1]), int(start.y * frame.shape[0])
                 x2, y2 = int(end.x * frame.shape[1]), int(end.y * frame.shape[0])
                 cv2.line(frame, (x1, y1), (x2, y2), color, 2)
+
+def get_angle(hand_world_landmarks, hand_idx, lm1, lm2, lm3):
+    if hand_world_landmarks:
+        hand = hand_world_landmarks[hand_idx]
+        v1 = [hand[lm1].x - hand[lm2].x, hand[lm1].y - hand[lm2].y, hand[lm1].z - hand[lm2].z]
+        v2 = [hand[lm3].x - hand[lm2].x, hand[lm3].y - hand[lm2].y, hand[lm3].z - hand[lm2].z]
+        v1_norm = v1 / np.linalg.norm(v1)
+        v2_norm = v2 / np.linalg.norm(v2)
+        dot_product = np.dot(v1_norm, v2_norm)
+        angle_radians = np.arccos(dot_product)
+        angle_deg = np.degrees(angle_radians)
+        return angle_deg
+
+    
