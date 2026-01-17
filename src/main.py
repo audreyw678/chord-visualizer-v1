@@ -19,7 +19,8 @@ def print_result(result: HandLandmarkerResult, output_image, timestamp_ms: int):
 options = HandLandmarkerOptions(
     base_options=BaseOptions(model_asset_path=str(MODEL_PATH)),
     running_mode=VisionRunningMode.LIVE_STREAM,
-    result_callback=print_result                # runs callback after each detection
+    result_callback=print_result,                # runs callback after each detection
+    num_hands = 2
 )
 
 cap = cv2.VideoCapture(0)
