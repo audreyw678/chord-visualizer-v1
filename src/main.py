@@ -13,10 +13,11 @@ HandLandmarkerResult = mp.tasks.vision.HandLandmarkerResult
 VisionRunningMode = mp.tasks.vision.RunningMode
 
 def print_result(result: HandLandmarkerResult, output_image, timestamp_ms: int):
-    #print('hand landmarker result: {}'.format(result))
+    print('hand landmarker result: {}'.format(result))
     global landmarks
     landmarks = result.hand_landmarks
-    print(get_note(get_angle(result.hand_world_landmarks, 0, 8, 5, 0)), get_note(get_angle(result.hand_world_landmarks, 0, 12, 9, 0)))
+    print(get_note(get_angle(result.hand_world_landmarks, "Left", 8, 5, 0)), get_note(get_angle(result.hand_world_landmarks, "Left", 12, 9, 0)),
+          get_note(get_angle(result.hand_world_landmarks, "Right", 8, 5, 0)), get_note(get_angle(result.hand_world_landmarks, "Right", 12, 9, 0)))
 
 
 options = HandLandmarkerOptions(
@@ -49,7 +50,8 @@ with HandLandmarker.create_from_options(options) as landmarker:
         if landmarks:                           # draw landmarks and skeleton, show on webcam viewer
             draw_landmarks(frame, landmarks)
             draw_hand_skeleton(frame, landmarks)
-        cv2.imshow("Hand Tracker", frame)
+        mirrored_frame = cv2.flip(frame, 1)
+        cv2.imshow("Hand Tracker", mirrored_frame)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):   # breaks loop if user presses 'q'
             break
