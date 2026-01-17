@@ -1,5 +1,5 @@
 import numpy as np
-from pyo import *
+from config import *
 
 def get_note(angle):
     if angle:
@@ -10,29 +10,24 @@ def get_note(angle):
         return max(note_index, 0)
 
 
-def initiate_pyo():
-    s = Server(audio='coreaudio', nchnls=2, duplex=0).boot()
-    s.start()
+# scale is wrong. might need to shift indices each time
+NOTE_IDX_TO_SEMITONES = [0, 2, 4, 5, 7, 9, 11, 12]
 
-    freqs = [220, 440]
-    soft_wave = TriangleTable(order=3)
+# Formula for calculating 12-TET frequencies:
+# P_{n} = P_{a} * 2^(n/12), where P_{a} is a reference frequency (like A4=440 Hz), 
+# n is the number of semitones from that reference, and 2^(1/12)
+# is the constant multiplier for each half-step, dividing the octave into 12 equal logarithmic steps. 
+def get_next_frequency(prev_freq, next_note_number):
+    num_semitones = NOTE_IDX_TO_SEMITONES[next_note_number]
+    next_freq = prev_freq * 2 ** (num_semitones/12)
+    return next_freq
 
-    osc_list = [Osc(soft_wave, freq=f, mul=0.1) for f in freqs]
-    mix = sum(osc_list) / len(osc_list)
-
-    filt_env = Adsr(attack=5, decay=2, sustain=0.7, release=8, dur=0, mul=400)
-    lfo = Sine(freq=0.03, mul=150)
-    filt = ButLP(mix, freq=800 + filt_env + lfo)
-
-    soft_fuzz = Disto(filt, drive=0.2, slope=0.5)
-
-    amp_env = Adsr(attack=3, decay=1, sustain=0.8, release=6, dur=0, mul=0.6)
-    pad = soft_fuzz * amp_env
-    amp_env.play()
-    filt_env.play()
-
-    chorused = Chorus(pad, depth=1.2, feedback=0.05, bal=0.5)
-    rev = Freeverb(chorused, size=0.7, damp=0.6, bal=0.4).out()
-
-    s.gui(locals())
-
+def get_chord_freqs(note1, note2, note3, note4):
+    freqs = [BASE_FREQUENCY]
+    for note in note1, note2, note3, note4:
+        if note:
+            freqs.append(get_next_frequency(freqs[-1], note))
+    freqs.pop(0)
+    while len(freqs) < 4:
+        freqs.append(0)
+    return freqs

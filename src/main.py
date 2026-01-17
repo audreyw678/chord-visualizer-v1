@@ -6,8 +6,9 @@ import cv2
 from cv_utils import *
 from notes import *
 from hand_info import *
+from audio_engine import ChordEngine
 
-initiate_pyo2()
+engine = ChordEngine()
 
 BaseOptions = mp.tasks.BaseOptions
 HandLandmarker = mp.tasks.vision.HandLandmarker
@@ -15,14 +16,16 @@ HandLandmarkerOptions = mp.tasks.vision.HandLandmarkerOptions
 HandLandmarkerResult = mp.tasks.vision.HandLandmarkerResult
 VisionRunningMode = mp.tasks.vision.RunningMode
 
-def print_result(result: HandLandmarkerResult, output_image, timestamp_ms: int):
+def print_result(result, output_image, timestamp_ms: int):
     print('hand landmarker result: {}'.format(result))
     global landmarks
     landmarks = result.hand_landmarks
-    print(get_note(get_angle(result, "Left", INDEX_TIP, INDEX_KNUCKLE_1, WRIST)),
-          get_note(get_angle(result, "Left", MIDDLE_TIP, MIDDLE_KNUCKLE_1, WRIST)),
-          get_note(get_angle(result, "Right", INDEX_TIP, INDEX_KNUCKLE_1, WRIST)), 
-          get_note(get_angle(result, "Right", MIDDLE_TIP, MIDDLE_KNUCKLE_1, WRIST)))
+    engine.play_chord(get_chord_freqs(
+        get_note(get_angle(result, "Left", INDEX_TIP, INDEX_KNUCKLE_1, WRIST)),
+        get_note(get_angle(result, "Left", MIDDLE_TIP, MIDDLE_KNUCKLE_1, WRIST)),
+        get_note(get_angle(result, "Right", INDEX_TIP, INDEX_KNUCKLE_1, WRIST)), 
+        get_note(get_angle(result, "Right", MIDDLE_TIP, MIDDLE_KNUCKLE_1, WRIST))
+    ))
 
 
 options = HandLandmarkerOptions(
