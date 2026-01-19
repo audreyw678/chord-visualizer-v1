@@ -7,7 +7,7 @@ class ChordEngine:
         self.s.start()
 
         self.soft_wave = TriangleTable(order=3)
-        self.freqs = [Sig(0), Sig(0), Sig(0), Sig(0)]
+        self.freqs = [SigTo(value=0, time=0.15) for _ in range(4)]
         self.osc_list = [Osc(self.soft_wave, freq=f, mul=0.1) for f in self.freqs]
 
 
