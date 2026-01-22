@@ -17,7 +17,7 @@ HandLandmarkerResult = mp.tasks.vision.HandLandmarkerResult
 VisionRunningMode = mp.tasks.vision.RunningMode
 
 def print_result(result, output_image, timestamp_ms: int):
-    print('hand landmarker result: {}'.format(result))
+    #print('hand landmarker result: {}'.format(result))
     global landmarks
     landmarks = result.hand_landmarks
     reset_note_mapping()
@@ -27,6 +27,11 @@ def print_result(result, output_image, timestamp_ms: int):
         get_note(get_angle(result, "Right", INDEX_TIP, INDEX_KNUCKLE_1, WRIST)), 
         get_note(get_angle(result, "Right", MIDDLE_TIP, MIDDLE_KNUCKLE_1, WRIST))
     ))
+    print(get_note(get_angle(result, "Left", INDEX_TIP, INDEX_KNUCKLE_1, WRIST)),
+        get_note(get_angle(result, "Left", MIDDLE_TIP, MIDDLE_KNUCKLE_1, WRIST)),
+        get_note(get_angle(result, "Right", INDEX_TIP, INDEX_KNUCKLE_1, WRIST)), 
+        get_note(get_angle(result, "Right", MIDDLE_TIP, MIDDLE_KNUCKLE_1, WRIST)))
+    
 
 
 options = HandLandmarkerOptions(
