@@ -59,6 +59,7 @@ with HandLandmarker.create_from_options(options) as landmarker:
         if landmarks:                           # draw landmarks and skeleton, show on webcam viewer
             draw_landmarks(frame, landmarks)
             draw_hand_skeleton(frame, landmarks)
+            draw_triangles(frame, landmarks)
         mirrored_frame = cv2.flip(frame, 1)
         cv2.imshow("Hand Tracker", mirrored_frame)
 

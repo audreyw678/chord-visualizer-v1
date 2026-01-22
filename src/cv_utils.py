@@ -11,6 +11,20 @@ def draw_landmarks(frame, hand_landmarks):
                 y = int(lm.y * frame.shape[0])
                 cv2.circle(frame, (x, y), 5, (0, 255, 0), -1)
 
+def draw_triangles(frame, hand_landmarks):
+    """draw triangles between thumb, index and middle fingertips"""
+    if hand_landmarks:
+        for hand in hand_landmarks:
+            points = []
+            for lm_idx in [THUMB_TIP, INDEX_TIP, MIDDLE_TIP]:
+                lm = hand[lm_idx]
+                x = int(lm.x * frame.shape[1])
+                y = int(lm.y * frame.shape[0])
+                points.append((x, y))
+            cv2.line(frame, points[0], points[1], (255, 0, 0), 2)
+            cv2.line(frame, points[1], points[2], (255, 0, 0), 2)
+            cv2.line(frame, points[2], points[0], (255, 0, 0), 2)
+
 def draw_hand_skeleton(frame, hand_landmarks, connections = HAND_CONNECTIONS, color=(0,255,0)):
     """draw lines between hand joints"""
     if hand_landmarks:
@@ -38,5 +52,21 @@ def get_angle(result, hand_name, lm1, lm2, lm3):
         angle_radians = np.arccos(dot_product)
         angle_deg = np.degrees(angle_radians)
         return angle_deg
+
+def get_triangle_area(result, hand_name, lm1=INDEX_TIP, lm2=MIDDLE_TIP, lm3=THUMB_TIP):
+        hand = None
+        for hand_landmarks, hand_label in zip(result.hand_landmarks, result.handedness):
+            if hand_label[0].category_name == hand_name:
+                hand = hand_landmarks
+                break
+        if hand is None:
+            return None 
+        x1, y1 = hand[lm1].x, hand[lm1].y
+        x2, y2 = hand[lm2].x, hand[lm2].y
+        x3, y3 = hand[lm3].x, hand[lm3].y
+        area = abs((x1*(y2 - y3) + x2*(y3 - y1) + x3*(y1 - y2)) / 2.0)
+        return area
+
+
 
     
