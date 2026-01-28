@@ -22,13 +22,8 @@ def print_result(result, output_image, timestamp_ms: int):
     landmarks = result.hand_landmarks
     reset_note_mapping()
     engine.set_volume(get_volume_as_float(get_triangle_area_2d(result, "Right")))
-    engine.play_chord(get_chord_freqs(
-        get_note(get_angle(result, "Left", INDEX_TIP, INDEX_KNUCKLE_1, WRIST)),
-        get_note(get_angle(result, "Left", MIDDLE_TIP, MIDDLE_KNUCKLE_1, WRIST)),
-        None, None
-    ))
-    print((get_triangle_area_3d(result, "Right"))*100)#, get_yaw(result, "Right"))
-
+    print(get_finger_states(result, "Left"))
+    print(is_hand_spread(result, "Left"))
 
 options = HandLandmarkerOptions(
     base_options=BaseOptions(model_asset_path=str(MODEL_PATH)),

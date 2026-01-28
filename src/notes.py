@@ -1,14 +1,37 @@
 import numpy as np
 from config import *
 
-def get_note(angle):
-    if angle:
-        bins = np.linspace(45, 150, 8)
-        note_index = np.digitize(angle, bins)
-        note_index = np.digitize(angle, bins, right=True)
-        note_index -= 1
-        return max(note_index, 0)
 
+def get_chord_type(finger_states, hand_spread):
+    """Chord mappings:
+    Major chord: all fingers up, spread out
+    Minor chord: all fingers up, close together
+    Diminished 7 chord: index finger up
+    Minor 7 chord: index and middle fingers up
+    Dominant 7 chord: index, middle, and ring fingers up
+    Major 7 chord: index, middle, ring, pinky fingers up
+    Sus2 chord: thumb and index fingers up
+    Sus4 chord: thumb and pinky fingers up
+    Sus24 chord: thumb, index, pinky fingers up"""
+    if finger_states == [True, True, True, True, True]:
+        if hand_spread:
+            return "Major"
+        else:
+            return "Minor"
+    elif finger_states == [False, True, False, False, False]:
+        return "Diminished7"
+    elif finger_states == [False, True, True, False, False]:    
+        return "Minor7"
+    elif finger_states == [False, True, True, True, False]:
+        return "Dominant7"
+    elif finger_states == [False, True, True, True, True]:
+        return "Major7"
+    elif finger_states == [True, True, False, False, False]:
+        return "Sus2"
+    elif finger_states == [True, False, False, False, True]:
+        return "Sus4"
+    elif finger_states == [True, True, False, False, True]:
+        return "Sus24"
 
 # scale is wrong. might need to shift indices each time
 node_idx_to_semitones = [0, 2, 4, 5, 7, 9, 11, 12]
@@ -43,6 +66,8 @@ def get_chord_freqs(note1, note2, note3, note4):
     return freqs
 
 def get_volume_as_float(triangle_area, max_area=0.005, min_area=0.0002):
+    if triangle_area is None:
+        return 0.0
     volume = triangle_area / max_area
     volume = min(max(volume, min_area), 1)
     return volume

@@ -85,5 +85,31 @@ def get_triangle_area_3d(result, hand_name, lm1=INDEX_TIP, lm2=MIDDLE_TIP, lm3=T
     area = np.sqrt(s * (s - a) * (s - b) * (s - c))
     return area
 
+def get_finger_states(result, hand_name, threshold=90, thumb_threshold=120):
+    hand = None
+    for hand_landmarks, hand_label in zip(result.hand_landmarks, result.handedness):
+        if hand_label[0].category_name == hand_name:
+            hand = hand_landmarks
+            break
+    if hand is None:
+        return None
+    finger_states = []
+    finger_tips = [THUMB_TIP, INDEX_TIP, MIDDLE_TIP, RING_TIP, PINKY_TIP]
+    finger_bases = [THUMB_KNUCKLE_2, INDEX_KNUCKLE_1, MIDDLE_KNUCKLE_1, RING_KNUCKLE_1, PINKY_KNUCKLE_1]
+    for tip, base, i in zip(finger_tips, finger_bases, range(5)):
+        angle = get_angle(result, hand_name, tip, base, WRIST)
+        if i == 0:
+            finger_states.append(angle > thumb_threshold)
+        else:
+            finger_states.append(angle > threshold)
+    return finger_states
 
-
+def is_hand_spread(result, hand_name, threshold=15):
+    hand = None
+    for hand_landmarks, hand_label in zip(result.hand_world_landmarks, result.handedness):
+        if hand_label[0].category_name == hand_name:
+            hand = hand_landmarks
+            break
+    if hand is None:
+        return None
+    return get_angle(result, hand_name, INDEX_TIP, INDEX_KNUCKLE_1, MIDDLE_TIP) > threshold
