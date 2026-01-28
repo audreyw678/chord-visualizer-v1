@@ -1,27 +1,33 @@
 # Chord Visualizer v1
 
-A real-time hand gesture-controlled musical instrument that uses computer vision to detect finger positions and synthesizes corresponding musical chords.
+A real-time hand gesture-controlled musical instrument that uses computer vision to detect hand positions and synthesizes musical chords based on finger states.
 
 ## Features
 
-- **Real-time hand tracking**: Uses MediaPipe for accurate hand landmark detection
-- **Gesture-to-chord mapping**: Maps finger bend angles to musical notes
-- **Audio synthesis**: Chord sounds created using pyo
-- **Visual feedback**: Displays hand landmarks and skeleton in real-time
-- **Multi-hand support**: supports chords played with both hands
+- **Real-time hand tracking**: Uses MediaPipe's HandLandmarker for accurate hand landmark detection
+- **Gesture-to-chord mapping**: Maps finger states and hand position to different chord types
+- **Multiple chord types**: Supports Major, Minor, Diminished 7, Minor 7, Dominant 7, Major 7, Sus2, Sus4, and Sus24 chords
+- **Audio synthesis**: Chord sounds created using pyo with sawtooth and sine oscillators
+- **Visual feedback**: Displays hand landmarks, skeleton, and hand triangles in real-time
+- **Volume control**: Right hand position controls audio volume
 
 ## How It Works
 
-The system tracks hand landmarks and calculates the bend angles of fingers (index and middle on both hands). These angles are mapped to musical notes using a chromatic scale, creating 4-note chords that are synthesized in real-time.
+The system detects hand landmarks using MediaPipe and determines which fingers are up/down. The combination of finger states and hand spread determines the chord type played. The left hand controls which chord type is synthesized, while the right hand position (via triangle area) controls the volume.
 
-### Gesture Mapping
-- **Left Hand Index Finger**: Maps to first chord note
-- **Left Hand Middle Finger**: Maps to second chord note based on upward pitch difference from first chord note
-- **Right Hand Index Finger**: Maps to third chord note based on upward
-pitch difference from second chord note
-- **Right Hand Middle Finger**: Maps to fourth chord note based on upward pitch difference from third chord note
+### Chord Type Mapping (Left Hand)
+- **All fingers up + spread**: Major chord
+- **All fingers up + close**: Minor chord
+- **Index finger only**: Diminished 7 chord
+- **Index + Middle**: Minor 7 chord
+- **Index + Middle + Ring**: Dominant 7 chord
+- **Index + Middle + Ring + Pinky**: Major 7 chord
+- **Thumb + Index**: Sus2 chord
+- **Thumb + Pinky**: Sus4 chord
+- **Thumb + Index + Pinky**: Sus24 chord
 
-Finger bend angles (45°-150°) are divided into 8 note bins spanning a musical scale.
+### Volume Control
+The right hand's position (triangle formed by thumb, index, and middle finger) determines the volume level.
 
 ## Requirements
 
@@ -106,13 +112,14 @@ chord-visualizer-v1/
 - **numpy**: Numerical computations
 - **sounddevice**: Audio output (used by pyo)
 
-## Timeline
+## Project Timeline
 - 1/16/2026: Started project, implemented basic hand detection functionality (hand detection, displaying hand landmarks)
-- 1/17/2026: Implemented audio synthesis engine with pyo, note mapping system, and gesture recognition. Added real-time chord synthesis and multi-hand support
+- 1/17/2026: Implemented audio synthesis engine with pyo, legacy note mapping system, and gesture recognition. Added real-time chord synthesis and multi-hand support
+- 1/20/2026: Implemented triangle area calculation for volume control based on right hand position
+- 1/24/2026: Migrated from angle-based to state-based chord synthesis
+- 1/27/2026: Implemented finger state detection and chord type mapping. 
 
 ## Future improvements
-
-- More precise gesture recognition (finger extension detection vs. angle measurement vs. relative position)
-- Chord shape recognition for common musical chords
 - Support for additional effects and parameters
-- Chord visualization perhaps using Lissajous curves
+- Chord visualization, perhaps using Lissajous curves
+- Improved GUI
