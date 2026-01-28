@@ -37,36 +37,53 @@ def draw_hand_skeleton(frame, hand_landmarks, connections = HAND_CONNECTIONS, co
                 cv2.line(frame, (x1, y1), (x2, y2), color, 2)
 
 def get_angle(result, hand_name, lm1, lm2, lm3):
-        hand = None
-        for hand_landmarks, hand_label in zip(result.hand_landmarks, result.handedness):
-            if hand_label[0].category_name == hand_name:
-                hand = hand_landmarks
-                break
-        if hand is None:
-            return None 
-        v1 = np.array([hand[lm1].x - hand[lm2].x, hand[lm1].y - hand[lm2].y, hand[lm1].z - hand[lm2].z])
-        v2 = np.array([hand[lm3].x - hand[lm2].x, hand[lm3].y - hand[lm2].y, hand[lm3].z - hand[lm2].z])
-        v1_norm = v1 / np.linalg.norm(v1)
-        v2_norm = v2 / np.linalg.norm(v2)
-        dot_product = np.dot(v1_norm, v2_norm)
-        angle_radians = np.arccos(dot_product)
-        angle_deg = np.degrees(angle_radians)
-        return angle_deg
+    hand = None
+    for hand_landmarks, hand_label in zip(result.hand_landmarks, result.handedness):
+        if hand_label[0].category_name == hand_name:
+            hand = hand_landmarks
+            break
+    if hand is None:
+        return None 
+    v1 = np.array([hand[lm1].x - hand[lm2].x, hand[lm1].y - hand[lm2].y, hand[lm1].z - hand[lm2].z])
+    v2 = np.array([hand[lm3].x - hand[lm2].x, hand[lm3].y - hand[lm2].y, hand[lm3].z - hand[lm2].z])
+    v1_norm = v1 / np.linalg.norm(v1)
+    v2_norm = v2 / np.linalg.norm(v2)
+    dot_product = np.dot(v1_norm, v2_norm)
+    angle_radians = np.arccos(dot_product)
+    angle_deg = np.degrees(angle_radians)
+    return angle_deg
 
-def get_triangle_area(result, hand_name, lm1=INDEX_TIP, lm2=MIDDLE_TIP, lm3=THUMB_TIP):
-        hand = None
-        for hand_landmarks, hand_label in zip(result.hand_landmarks, result.handedness):
-            if hand_label[0].category_name == hand_name:
-                hand = hand_landmarks
-                break
-        if hand is None:
-            return None 
-        x1, y1 = hand[lm1].x, hand[lm1].y
-        x2, y2 = hand[lm2].x, hand[lm2].y
-        x3, y3 = hand[lm3].x, hand[lm3].y
-        area = abs((x1*(y2 - y3) + x2*(y3 - y1) + x3*(y1 - y2)) / 2.0)
-        return area
+def get_triangle_area_2d(result, hand_name, lm1=INDEX_TIP, lm2=MIDDLE_TIP, lm3=THUMB_TIP):
+    hand = None
+    for hand_landmarks, hand_label in zip(result.hand_world_landmarks, result.handedness):
+        if hand_label[0].category_name == hand_name:
+            hand = hand_landmarks
+            break
+    if hand is None:
+        return None 
+    x1, y1 = hand[lm1].x, hand[lm1].y
+    x2, y2 = hand[lm2].x, hand[lm2].y
+    x3, y3 = hand[lm3].x, hand[lm3].y
+    area = abs((x1*(y2 - y3) + x2*(y3 - y1) + x3*(y1 - y2)) / 2.0)
+    return area
+
+def get_triangle_area_3d(result, hand_name, lm1=INDEX_TIP, lm2=MIDDLE_TIP, lm3=THUMB_TIP):
+    hand = None
+    for hand_landmarks, hand_label in zip(result.hand_world_landmarks, result.handedness):
+        if hand_label[0].category_name == hand_name:
+            hand = hand_landmarks
+            break
+    if hand is None:
+        return None 
+    p1 = np.array([hand[lm1].x, hand[lm1].y, hand[lm1].z])
+    p2 = np.array([hand[lm2].x, hand[lm2].y, hand[lm2].z])
+    p3 = np.array([hand[lm3].x, hand[lm3].y, hand[lm3].z])
+    a = np.linalg.norm(p2 - p1)
+    b = np.linalg.norm(p3 - p2)
+    c = np.linalg.norm(p1 - p3)
+    s = (a + b + c) / 2
+    area = np.sqrt(s * (s - a) * (s - b) * (s - c))
+    return area
 
 
 
-    
