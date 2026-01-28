@@ -41,3 +41,8 @@ def get_chord_freqs(note1, note2, note3, note4):
     while len(freqs) < 4:
         freqs.append(0)
     return freqs
+
+def get_volume_as_float(triangle_area, max_area=0.005, min_area=0.0002):
+    volume = triangle_area / max_area
+    volume = min(max(volume, min_area), 1)
+    return volume

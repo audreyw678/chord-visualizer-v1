@@ -44,3 +44,7 @@ class ChordEngine:
         for i in range(4):
             self.freqs[i].value = frequencies[i] if frequencies[i] else 0
 
+    def set_volume(self, volume):
+        #input: volume: float between 0 and 1
+        self.mix.mul = volume
+
