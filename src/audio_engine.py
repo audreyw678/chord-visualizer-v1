@@ -1,5 +1,5 @@
 from pyo import *
-from config import BASE_FREQUENCY
+from config import BASE_FREQUENCY, MAX_CHORD_NOTES
 
 class ChordEngine:
     def __init__(self):
@@ -7,7 +7,7 @@ class ChordEngine:
         self.s.start()
 
         self.saw_wave = SawTable(order=10)
-        self.freqs = [Sig(0), Sig(0), Sig(0), Sig(0)]
+        self.freqs = [Sig(0) for _ in range(MAX_CHORD_NOTES)]
         self.osc_list = [Osc(self.saw_wave, freq=f, mul=0.1) for f in self.freqs]
         self.osc_list += [Sine(f, mul=0.05) for f in self.freqs]
         self.osc_list += [Sine(f+(1/8), mul=0.05) for f in self.freqs]
@@ -41,8 +41,9 @@ class ChordEngine:
         
     
     def play_chord(self, frequencies):
-        for i in range(4):
-            self.freqs[i].value = frequencies[i] if frequencies[i] else 0
+        if frequencies[0] is not None:
+            for i in range(len(frequencies)):
+                self.freqs[i].value = float(frequencies[i]) if frequencies[i] else 0
 
     def set_volume(self, volume):
         #input: volume: float between 0 and 1

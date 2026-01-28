@@ -20,8 +20,8 @@ def print_result(result, output_image, timestamp_ms: int):
     #print('hand landmarker result: {}'.format(result))
     global landmarks
     landmarks = result.hand_landmarks
-    reset_note_mapping()
     engine.set_volume(get_volume_as_float(get_triangle_area_2d(result, "Right")))
+    engine.play_chord(get_chord_freqs(get_chord_type(get_finger_states(result, "Left"), is_hand_spread(result, "Left"))))
     print(get_finger_states(result, "Left"))
     print(is_hand_spread(result, "Left"))
 

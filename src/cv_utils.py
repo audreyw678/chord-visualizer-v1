@@ -85,7 +85,7 @@ def get_triangle_area_3d(result, hand_name, lm1=INDEX_TIP, lm2=MIDDLE_TIP, lm3=T
     area = np.sqrt(s * (s - a) * (s - b) * (s - c))
     return area
 
-def get_finger_states(result, hand_name, threshold=90, thumb_threshold=120):
+def get_finger_states(result, hand_name, threshold=90, thumb_threshold=130):
     hand = None
     for hand_landmarks, hand_label in zip(result.hand_landmarks, result.handedness):
         if hand_label[0].category_name == hand_name:
