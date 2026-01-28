@@ -33,7 +33,7 @@ Finger bend angles (45°-150°) are divided into 8 note bins spanning a musical 
 
 ### 1. Clone the repository
 ```bash
-git clone <repository-url>
+git clone https://github.com/audreyw678/chord-visualizer-v1
 cd chord-visualizer-v1
 ```
 

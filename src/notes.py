@@ -22,9 +22,10 @@ def get_next_frequency(prev_freq, next_note_number):
     num_semitones = node_idx_to_semitones[next_note_number]
     next_freq = prev_freq * 2 ** (num_semitones/12)
     # shift node_idx list
-    node_idx_to_semitones = node_idx_to_semitones[next_note_number:] + [12 + i for i in node_idx_to_semitones[1:next_note_number]]
-    node_idx_to_semitones = [i - node_idx_to_semitones[0] for i in node_idx_to_semitones]
-    node_idx_to_semitones.append(node_idx_to_semitones[0]+12)
+    if next_note_number != 0:
+        node_idx_to_semitones = node_idx_to_semitones[next_note_number:] + [12 + i for i in node_idx_to_semitones[1:next_note_number]]
+        node_idx_to_semitones = [i - node_idx_to_semitones[0] for i in node_idx_to_semitones]
+        node_idx_to_semitones.append(node_idx_to_semitones[0]+12)
     return next_freq
 
 def reset_note_mapping():
