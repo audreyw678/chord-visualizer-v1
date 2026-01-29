@@ -113,3 +113,16 @@ def is_hand_spread(result, hand_name, threshold=15):
     if hand is None:
         return None
     return get_angle(result, hand_name, INDEX_TIP, INDEX_KNUCKLE_1, MIDDLE_TIP) > threshold
+
+def is_palm_front(result, hand_name):
+    hand = None
+    for hand_landmarks, hand_label in zip(result.hand_world_landmarks, result.handedness):
+        if hand_label[0].category_name == hand_name:
+            hand = hand_landmarks
+            break
+    if hand is None:
+        return None
+    if hand_name == "Left":
+        return hand[INDEX_KNUCKLE_1].x < hand[PINKY_KNUCKLE_1].x
+    else:
+        return hand[INDEX_KNUCKLE_1].x > hand[PINKY_KNUCKLE_1].x

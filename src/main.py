@@ -23,7 +23,8 @@ def print_result(result, output_image, timestamp_ms: int):
     engine.set_volume(get_volume_as_float(get_triangle_area_2d(result, "Right")))
     engine.play_chord(get_chord_freqs(get_chord_type(get_finger_states(result, "Left"), is_hand_spread(result, "Left"))))
     print(get_finger_states(result, "Left"))
-    print(is_hand_spread(result, "Left"))
+    #print(is_hand_spread(result, "Left"))
+    #print(is_palm_front(result, "Right"))
 
 options = HandLandmarkerOptions(
     base_options=BaseOptions(model_asset_path=str(MODEL_PATH)),
