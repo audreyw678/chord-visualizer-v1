@@ -4,6 +4,7 @@ from mediapipe.tasks.python import vision
 from config import MODEL_PATH
 import cv2
 from cv_utils import *
+from gui_utils import *
 from notes import *
 from hand_info import *
 from audio_engine import ChordEngine
@@ -22,7 +23,9 @@ def print_result(result, output_image, timestamp_ms: int):
     landmarks = result.hand_landmarks
     engine.set_volume(get_volume_as_float(get_triangle_area_2d(result, "Right")))
     engine.play_chord(get_chord_freqs(get_chord_type(get_finger_states(result, "Left"), is_hand_spread(result, "Left"))))
-    print(get_finger_states(result, "Left"))
+    #print(get_finger_states(result, "Left"))
+    #print(result.hand_landmarks[0][INDEX_TIP].x)
+    print(get_hand_region(result, "Left"))
     #print(is_hand_spread(result, "Left"))
     #print(is_palm_front(result, "Right"))
 
@@ -49,6 +52,7 @@ with HandLandmarker.create_from_options(options) as landmarker:
 
         # wrap frame as an Image object for mediapipe
         mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+        draw_regions(frame)
         # detects landmarks
         landmarker.detect_async(mp_image, timestamp_ms=frame_count)
         frame_count += 1

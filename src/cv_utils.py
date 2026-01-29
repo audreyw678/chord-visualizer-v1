@@ -2,39 +2,8 @@ import cv2
 import numpy as np
 from hand_info import *
 
-def draw_landmarks(frame, hand_landmarks):
-    """draw hand landmarks as green circles"""
-    if hand_landmarks:
-        for hand in hand_landmarks:
-            for lm in hand:
-                x = int(lm.x * frame.shape[1])
-                y = int(lm.y * frame.shape[0])
-                cv2.circle(frame, (x, y), 5, (0, 255, 0), -1)
-
-def draw_triangles(frame, hand_landmarks):
-    """draw triangles between thumb, index and middle fingertips"""
-    if hand_landmarks:
-        for hand in hand_landmarks:
-            points = []
-            for lm_idx in [THUMB_TIP, INDEX_TIP, MIDDLE_TIP]:
-                lm = hand[lm_idx]
-                x = int(lm.x * frame.shape[1])
-                y = int(lm.y * frame.shape[0])
-                points.append((x, y))
-            cv2.line(frame, points[0], points[1], (255, 0, 0), 2)
-            cv2.line(frame, points[1], points[2], (255, 0, 0), 2)
-            cv2.line(frame, points[2], points[0], (255, 0, 0), 2)
-
-def draw_hand_skeleton(frame, hand_landmarks, connections = HAND_CONNECTIONS, color=(0,255,0)):
-    """draw lines between hand joints"""
-    if hand_landmarks:
-        for hand in hand_landmarks:
-            for start_idx, end_idx in connections:
-                start = hand[start_idx]
-                end = hand[end_idx]
-                x1, y1 = int(start.x * frame.shape[1]), int(start.y * frame.shape[0])
-                x2, y2 = int(end.x * frame.shape[1]), int(end.y * frame.shape[0])
-                cv2.line(frame, (x1, y1), (x2, y2), color, 2)
+# SPLIT METHODS INTO GUI AND DETECTION
+# my right hand side --> x=0, left hand side --> x=1
 
 def get_angle(result, hand_name, lm1, lm2, lm3):
     hand = None
@@ -126,3 +95,26 @@ def is_palm_front(result, hand_name):
         return hand[INDEX_KNUCKLE_1].x < hand[PINKY_KNUCKLE_1].x
     else:
         return hand[INDEX_KNUCKLE_1].x > hand[PINKY_KNUCKLE_1].x
+    
+def get_hand_region(result, hand_name="Left"):
+    """Use hand landmarks to determine which region the middle knuckle of the hand is in [(left, center, right), (top, bottom)]"""
+    hand = None
+    for hand_landmarks, hand_label in zip(result.hand_landmarks, result.handedness):
+        if hand_label[0].category_name == hand_name:
+            hand = hand_landmarks
+            break
+    if hand is None:
+        return None
+    x = hand[MIDDLE_KNUCKLE_1].x
+    y = hand[MIDDLE_KNUCKLE_1].y
+    if x > 0.75:
+        x_region = "left"
+    elif x > 0.5:
+        x_region = "center"
+    else:
+        x_region = "right"
+    if y < 0.5:
+        y_region = "top"
+    else:
+        y_region = "bottom"
+    return (x_region, y_region)
