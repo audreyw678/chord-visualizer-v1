@@ -54,7 +54,7 @@ def get_triangle_area_3d(result, hand_name, lm1=INDEX_TIP, lm2=MIDDLE_TIP, lm3=T
     area = np.sqrt(s * (s - a) * (s - b) * (s - c))
     return area
 
-def get_finger_states(result, hand_name, threshold=90, thumb_threshold=130):
+def get_finger_states(result, hand_name, threshold=90, thumb_threshold=140):
     hand = None
     for hand_landmarks, hand_label in zip(result.hand_landmarks, result.handedness):
         if hand_label[0].category_name == hand_name:
@@ -73,7 +73,7 @@ def get_finger_states(result, hand_name, threshold=90, thumb_threshold=130):
             finger_states.append(angle > threshold)
     return finger_states
 
-def is_hand_spread(result, hand_name, threshold=15):
+def is_hand_spread(result, hand_name, threshold=10):
     hand = None
     for hand_landmarks, hand_label in zip(result.hand_world_landmarks, result.handedness):
         if hand_label[0].category_name == hand_name:

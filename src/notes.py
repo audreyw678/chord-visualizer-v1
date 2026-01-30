@@ -1,5 +1,6 @@
 import numpy as np
 from config import *
+from cv_utils import *
 
 MAJOR_CHORD = [0, 4, 7, 12]
 MINOR_CHORD = [0, 3, 7, 12]
@@ -22,6 +23,8 @@ def get_chord_type(finger_states, hand_spread):
     Sus2 chord: thumb and index fingers up
     Sus4 chord: thumb and pinky fingers up
     Sus24 chord: thumb, index, pinky fingers up"""
+    if finger_states is None:
+        return None
     if finger_states == [True, True, True, True, True]:
         if hand_spread:
             return MAJOR_CHORD
@@ -44,7 +47,8 @@ def get_chord_type(finger_states, hand_spread):
     else:
         return None
 
-def get_chord_freqs(chord_notes, root_note=BASE_FREQUENCY):
+def get_chord_freqs(chord_notes, hand_region, is_palm_front=True):
+    root_note = get_root_note(hand_region, is_palm_front)
     if chord_notes is None:
         return [None for i in range(MAX_CHORD_NOTES)]
     frequencies = [None for i in range(MAX_CHORD_NOTES)]
@@ -62,3 +66,23 @@ def get_volume_as_float(triangle_area, max_area=0.005, min_area=0.0002):
     volume = triangle_area / max_area
     volume = min(max(volume, min_area), 1)
     return volume
+
+ROOT_NOTE_MAPPINGS = {
+    ("left", "top"): [6, 7],    # F3, F#3 (palm forward, palm backward)
+    ("left", "bottom"): [5, 0], # E3, B2
+    ("center", "top"): [1, 2],  # C3, C#3
+    ("center", "bottom"): [10, 11], # A3, A#3
+    ("right", "top"): [8, 9],   # G3, G#3
+    ("right", "bottom"): [3, 4] # D3, D#3
+}
+def get_root_note(hand_region, is_palm_front=True):
+    if hand_region is None:
+        return None
+    x_region, y_region = hand_region
+    note_indices = ROOT_NOTE_MAPPINGS.get((x_region, y_region))
+    if note_indices is not None:
+        if is_palm_front:
+            return BASE_FREQUENCY * (2 ** (note_indices[0] / 12))  # Return first note index for palm front
+        else:
+            return BASE_FREQUENCY * (2 ** (note_indices[1] / 12))  # Return second note index for palm back
+    return None
