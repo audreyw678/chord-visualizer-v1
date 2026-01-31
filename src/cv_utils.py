@@ -54,7 +54,7 @@ def get_triangle_area_3d(result, hand_name, lm1=INDEX_TIP, lm2=MIDDLE_TIP, lm3=T
     area = np.sqrt(s * (s - a) * (s - b) * (s - c))
     return area
 
-def get_finger_states(result, hand_name, threshold=130, thumb_threshold=140):
+def get_finger_states(result, hand_name, threshold=150, thumb_threshold=160):
     hand = None
     for hand_landmarks, hand_label in zip(result.hand_landmarks, result.handedness):
         if hand_label[0].category_name == hand_name:
@@ -68,7 +68,8 @@ def get_finger_states(result, hand_name, threshold=130, thumb_threshold=140):
     for tip, base, i in zip(finger_tips, finger_bases, range(5)):
         angle = get_angle(result, hand_name, tip, base, WRIST)
         if i == 0:
-            finger_states.append(angle > thumb_threshold)
+            palm_front = is_palm_front(result, hand_name)
+            finger_states.append(angle > thumb_threshold or hand[THUMB_TIP].x < hand[THUMB_KNUCKLE_1].x if palm_front else angle > thumb_threshold or hand[THUMB_TIP].x > hand[THUMB_KNUCKLE_1].x)
         else:
             finger_states.append(angle > threshold)
     return finger_states

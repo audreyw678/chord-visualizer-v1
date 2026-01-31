@@ -2,6 +2,8 @@ import numpy as np
 from config import *
 from cv_utils import *
 
+OCTAVE_CHORD = [0, 12]
+OCTAVE_FIFTH_CHORD = [0, 7, 12]
 MAJOR_CHORD = [0, 4, 7, 12]
 MINOR_CHORD = [0, 3, 7, 12]
 DIMINISHED7_CHORD = [0, 3, 6, 9, 12]
@@ -44,6 +46,10 @@ def get_chord_type(finger_states, hand_spread):
         return SUS4_CHORD
     elif finger_states == [True, True, False, False, True]:
         return SUS24_CHORD
+    elif finger_states == [False, False, False, False, False]:
+        return OCTAVE_CHORD
+    elif finger_states == [True, False, False, False, False]:
+        return OCTAVE_FIFTH_CHORD
     else:
         return None
 
