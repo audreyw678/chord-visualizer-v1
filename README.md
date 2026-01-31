@@ -39,7 +39,7 @@ Palm backward: B  | Palm backward: A# | Palm backward: D# |
 ```
 
 ### Volume Control
-The right hand's position (triangle formed by thumb, index, and middle finger) determines the volume level.
+The right hand's position (the triangle formed by thumb, index, and middle finger) determines the volume level. A triangle with a larger area corresponds to a louder volume, while a triangle with a smaller area corresponds to a quieter volume.
 
 ## Requirements
 
