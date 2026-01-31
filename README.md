@@ -6,18 +6,20 @@ A real-time hand gesture-controlled musical instrument that uses computer vision
 
 - **Real-time hand tracking**: Uses MediaPipe's HandLandmarker for accurate hand landmark detection
 - **Gesture-to-chord mapping**: Maps finger states and hand position to different chord types
-- **Multiple chord types**: Supports Major, Minor, Diminished 7, Minor 7, Dominant 7, Major 7, Sus2, Sus4, and Sus24 chords
+- **Multiple chord types**: Supports Major, Minor, Diminished 7, Minor 7, Dominant 7, Major 7, Sus2, Sus4, and Sus24 chords in all keys
 - **Audio synthesis**: Chord sounds created using pyo with sawtooth and sine oscillators
 - **Visual feedback**: Displays hand landmarks, skeleton, and hand triangles in real-time
 - **Volume control**: Right hand position controls audio volume
 
 ## How It Works
 
-The system detects hand landmarks using MediaPipe and determines which fingers are up/down. The combination of finger states and hand spread determines the chord type played. The left hand controls which chord type is synthesized, while the right hand position (via triangle area) controls the volume.
+The system detects hand landmarks using MediaPipe and determines which fingers are in or out. The combination of finger states and hand spread determines the chord type played. The left hand controls which chord type is synthesized, while the right hand position (via triangle area) controls the volume. The location and orientation of the left hand controls the root note of the chord.
 
 ### Chord Type Mapping (Left Hand)
 - **All fingers up + spread**: Major chord
 - **All fingers up + close**: Minor chord
+- **No fingers up**: Octave
+- **Thumb only**: Fifth
 - **Index finger only**: Diminished 7 chord
 - **Index + Middle**: Minor 7 chord
 - **Index + Middle + Ring**: Dominant 7 chord
@@ -25,6 +27,16 @@ The system detects hand landmarks using MediaPipe and determines which fingers a
 - **Thumb + Index**: Sus2 chord
 - **Thumb + Pinky**: Sus4 chord
 - **Thumb + Index + Pinky**: Sus24 chord
+
+### Root Note Control
+The root note of the chord is determined by the hand's position in the 6-box grid shown on the screen as well as the hand's orientation. This is determined by the knuckle of the middle finger, which is at the approximate center of the hand. The mapping scheme is as follows:
+```
+ Palm forward: F  |  Palm forward: C  |  Palm forward: G  |
+Palm backward: F# | Palm backward: C# | Palm backward: G# |
+-----------------------------------------------------------
+ Palm forward: E  |  Palm forward: A  |  Palm forward: D  |
+Palm backward: B  | Palm backward: A# | Palm backward: D# |
+```
 
 ### Volume Control
 The right hand's position (triangle formed by thumb, index, and middle finger) determines the volume level.
@@ -117,7 +129,9 @@ chord-visualizer-v1/
 - 1/17/2026: Implemented audio synthesis engine with pyo, legacy note mapping system, and gesture recognition. Added real-time chord synthesis and multi-hand support
 - 1/20/2026: Implemented triangle area calculation for volume control based on right hand position
 - 1/24/2026: Migrated from angle-based to state-based chord synthesis
-- 1/27/2026: Implemented finger state detection and chord type mapping. 
+- 1/27/2026: Implemented finger state detection and chord type mapping.
+- 1/29/2026: Added hand regions and root note mapping based on hand region and orientation.
+- 1/31/2026: Added octave and fifth chords
 
 ## Future improvements
 - Support for additional effects and parameters
